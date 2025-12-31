@@ -1,0 +1,57 @@
+"use client"
+import { Icons } from '@/Icons/iconica'
+import React from 'react'
+
+const Footer = () => {
+  return (
+    <div className='relative inset-0 flex max-sm:flex-col pb-2 border-t-[1.5px] text-white bg-black border-white pt-2 break-all justify-between w-full max-sm:px-4 px-2  max-sm:gap-5'
+    style={{
+          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='3' height='3' fill='none' stroke='white'%3e%3cpath d='M0 .5H31.5V32'/%3e%3cpath d='M15 16v2M16 17h-2' stroke-width='2'/%3e%3c/svg%3e")`,
+        }}>
+    <div className="absolute inset-0 z-10 bg-[radial-gradient(ellipse_at_center,transparent_10%,black_100%)] pointer-events-none"></div>
+      <div className='flex max-sm:self-start flex-col max-sm:flex-row justify-evenly max-sm:justify-center gap-10 max-sm:gap-4 z-10 items-center'>
+        <div>
+          <h1 className='font-bold'>follow us</h1>
+        </div>
+        <div className='flex gap-2'>
+          <Icons.facebook width={20} height={20} className='hover:fill-blue-500 fill-[#828282] duration-200 transition-colors'/>
+          <Icons.linkedin width={20} height={20} className='hover:fill-blue-700 fill-[#828282] duration-200 transition-colors'/>
+          <Icons.youtube width={20} height={20} className='hover:fill-red-600 fill-[#828282] duration-200 transition-colors'/>
+          <Icons.instagram width={20} height={20} className='hover:fill-amber-500 fill-[#828282] duration-200 transition-colors'/>
+        </div>
+      </div>
+      <div className='flex max-sm:w-full z-10 gap-20 mr-4'>
+      <div className='flex flex-col max-sm:order-2 max gap-4'>
+        <div className='font-medium'>company</div>
+        <h1 className='font font-medium text-sm text-[#454545]'>Eyob Taffa</h1>
+        <h1 className='font font-medium text-sm text-[#454545]'>About us</h1>
+        <h1 className='font font-medium text-sm text-[#454545]'>Our team</h1>
+      </div>
+      <div className='flex flex-col z-10 max-sm:hidden gap-4'>
+        <div>
+        <h1 className='font-medium'>Our service</h1></div>
+        <h1 className='font-medium text-sm text-[#454545]'>wholesale distribution</h1>
+        <h1 className='font-medium text-sm text-[#454545]'>Logistics and supply chain</h1>
+        <h1 className='font-medium text-sm text-[#454545]'>market access</h1>
+      </div>
+      <div className='flex flex-col z-10 max-sm:order-1 gap-4'>
+        <div > <h1 className='font-medium '>Contact us</h1></div>
+        <div className='text-sm text-[#454545]'>
+          <h1 className='font-medium'>address:</h1>
+          <address>T/haymanot, merkato</address>
+        </div>
+        <div className='text-sm text-[#454545]'>
+          <h1 className='font-medium'>call:</h1>
+          <address>0967283176</address>
+        </div>
+        <div className='text-sm text-[#454545]'>
+          <h1 className='font-medium'>email:</h1>
+          <address>eyobtaffa@gmail.com</address>
+        </div>
+      </div>
+      </div>
+    </div>
+  )
+}
+
+export default Footer
