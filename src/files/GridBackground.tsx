@@ -16,7 +16,7 @@ const GridBackground = ({ children }: { children: React.ReactNode }) => {
       <div 
         className="absolute inset-0 z-0 opacity-20"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16' fill='none' stroke='white'%3e%3cpath d='M0 .5H31.5V32'/%3e%3cpath d='M15 16v2M16 17h-2' stroke-width='2'/%3e%3c/svg%3e")`,
+          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16' fill='none' stroke='rgb(255, 255, 255)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3cpath d='M15 16v2M16 17h-2' stroke-width='2'/%3e%3c/svg%3e")`,
         }}
       />
       {/* 2. The Grid Pattern Layer */}

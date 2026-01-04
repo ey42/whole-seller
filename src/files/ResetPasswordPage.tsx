@@ -10,15 +10,15 @@ interface ResetPasswordPageProps {
   password?: string;
   passwordConfirm?: string;
 }
-interface objectProps {
-  [key: string]: string | number | string[]
-}
+
+
 const ResetPasswordPage = () => {
   const [showPassword, setShowPassword] = React.useState(false)
   const [resetPassword, setResetPassword] = React.useState<ResetPasswordPageProps>({})
-  const [error, setError] = React.useState<objectProps>({})
+  const [error, setError] = React.useState<boolean>(false)
   const [generatePassword, setGeneratedPassword] = React.useState<string>("")
   const [copied, setCopied] = useState<boolean>(false)
+  const [fetchedError, setFetchedError] = useState<string | null>(null)
   const token = useSearchParams().get('token');
   const router = useRouter()
   console.log(`token from url is: ${token}`)
@@ -35,11 +35,11 @@ const ResetPasswordPage = () => {
       const result = resetPasswordSchema.safeParse(resetPassword)
       try {
         if(result.error){
-          setError(result.error.flatten().fieldErrors as objectProps)
+          setError(true)
         }
         console.log(`password ${result.data?.password} password confirm ${result.data?.passwordConfirm}`)
         if(result.success){
-          const res = await fetch('http://localhost:3000/api/resetPassword',{
+          await fetch('http://localhost:3000/api/resetPassword',{
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -48,12 +48,17 @@ const ResetPasswordPage = () => {
               token: token,
               password: resetPassword.password
             })
-          }).then((data) => {
+          }).then(async(data) => {
+            const result = await data.json()
             if(data.ok){
               router.push("/login")
+              setFetchedError(null)
+              setError(false)
             }
             if(!data.ok){
-              alert('error happen send email again on login page')
+              setFetchedError(result.message)
+              setError(false)
+
             }
           })
 
@@ -85,24 +90,24 @@ const ResetPasswordPage = () => {
     <div className='inset-0 flex items-center justify-center mt-10'>
         <div className='bg-black flex gap-10 flex-col items-center justify-center p-6 text-white shadow-[0_10px_500px_20px_rgba(255,255,255,0.6)] rounded-md min-w-96 min-h-96'>
               <div className='text-green-400 gap-10 flex flex-col'>
-               <div className='flex flex-col'>
+               <div className='flex flex-col text-sm'>
                 <p>1 Capital</p>                
                 <p>1 small</p>
                 <p> 1 special character(^%$#*&@)</p>
                 <p>minimum 8 length</p>
               </div>
               <div className='flex text-sm gap-2'>
-                <p>password example : {generatePassword}</p>
+                <p>use password example : {generatePassword}</p>
                 {copied ? <CopyCheck/> : <Copy className='cursor-pointer' onClick={copyToClipboard}/>}
               </div>
                 
               </div>
             <div className='flex flex-col w-full gap-2 '>  
-            <input className='focus:outline-none mb-2 font-bold text-black focus:placeholder:text-transparent rounded-md h-10 placeholder:text-gray-400 placeholder:font-medium pl-2 bg-white' type={showPassword ? "text" : "password"} placeholder='password' onChange = {(e) => {
+            <input className='focus:outline-none mb-2 font-semibold text-black focus:placeholder:text-transparent rounded h-10 placeholder:text-gray-400 placeholder:font-medium pl-2 bg-white' type={showPassword ? "text" : "password"} placeholder='password' onChange = {(e) => {
               setResetPassword({...resetPassword, password: e.target.value})
             }
             } required/>
-            <input className='focus:outline-none font-bold text-black focus:placeholder:text-transparent rounded-md h-10 placeholder:text-gray-400 placeholder:font-medium pl-2 bg-white' type={showPassword ? "text" : "password"} placeholder='confirm-password' onChange = {(e) => {
+            <input className='focus:outline-none font-semibold text-black focus:placeholder:text-transparent rounded-md h-10 placeholder:text-gray-400 placeholder:font-medium pl-2 bg-white' type={showPassword ? "text" : "password"} placeholder='confirm-password' onChange = {(e) => {
                console.log(`token from url is: ${token} and from useSearchParams is: ${token}`)
               setResetPassword({...resetPassword, passwordConfirm: e.target.value})
             }} required/>
@@ -112,9 +117,13 @@ const ResetPasswordPage = () => {
           <Eye className="w-5 h-5 text-white" />
         )}</button>
           </div>
-        <button onClick={handleResetPassword} className={cn('rounded-2 border py-2 px-16 cursor-pointer', Object.values(error).length > 0 ? "border-red-500": "border-white")}>submit</button>
-        {Object.values(error).length > 0  && <p className='text-red-500'>please check password format</p>}
+        <button onClick={handleResetPassword} className={cn('rounded-2 border py-2 px-16 cursor-pointer', (error || fetchedError) ? "border-red-500": "border-white")}>submit</button>
+        {error  && <p className='text-red-500'>please check password format</p>}
+        {fetchedError  && <p className='text-red-500'>{fetchedError}</p>}
+
         </div>
+
+        
       
     </div>
   )

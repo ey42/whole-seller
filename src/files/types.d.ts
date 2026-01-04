@@ -39,3 +39,35 @@ interface productProps {
         image: string;
         id: string;
 }[]
+
+interface userPros {
+    id: string;
+    name: string;
+    email: string;
+    emailVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+interface profileProps {
+    id: string;
+    userId: string;
+    woreda: string | null;
+    kebele: string | null;
+    userRole: "user" | "admin" | "intermediate" | null;
+    subCity: string;
+    shopName: string | null;
+    TIN: string | null;
+    phoneNumber: string;
+    image: string | null;
+}
+
+interface userProfileProps{
+    id: string;
+    name: string;
+    email: string;
+    emailVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    profile: profileProps;
+}

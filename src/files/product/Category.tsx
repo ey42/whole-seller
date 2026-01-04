@@ -87,39 +87,45 @@ const Category = ({id,specificCategory}: {id:string,specificCategory: oneCategor
             <h1 className='text-2xl flex font-bold'><span className='-mt-2 -ml-3'><ChevronDown strokeWidth={3} width={70} height={50}/></span>Explore the different types of {specificCategory?.catagory} we offer below </h1>
         </div>
       </div>}
-      <div className='flex flex-col justify-center gap-10 px-20 max-sm:px-5 items-start w-full'>
+      <div className='flex flex-col gap-y-20 justify-center gap-10 px-20 max-sm:px-5 items-start w-full'>
         {
          specificCategory !== undefined && specificCategory.products.map((product, index) => (
             <div className='flex max-sm:whitespace-pre-line max-sm:flex-col max-sm:p-0 justify-between pr-10 w-full' key={index}>
-              <div className='border-2 border-white flex max-sm:flex-row flex-col gap-4 p-5 rounded bg-[rgba(0,0,0,0.8)] justify-start items-start'>
+              <div className='border-2 border-white flex max-sm:flex-row flex-col gap-4 p-5 rounded backdrop-blur-lg backdrop-opacity-50 justify-start items-start'>
                 <div className='w-44 h-44'>
                 <Image className='w-full h-full' alt={product.name} src={product.image} width={1000} height={1000} />
                 </div>
-                <div className='flex flex-col'>                
-                <p className='text-[#ffffff] w-full font-light max-w-72 max-sm:hidden text-lg'>{product.description}</p>
-                <h2 className='text-[#ffffff] font-medium text-lg'>amount on stock: {product.amountOnStock}</h2>
-                <h2 className='text-[#ffffff] font-medium text-lg'>{product.name} {specificCategory.catagory}</h2>
-                <p className='text-[#ffffff] font-medium text-lg'>ETB {product.price}.00</p>
+                <div className='flex gap-4 flex-col'>                
+                <p className='text-[#ffffff] w-full max-w-72 max-sm:hidden text-lg'>{product.description}</p>
+                <div className='flex flex-col gap-1'>
+                <h2 className='text-[#ffffff] font-medium border-b'>amount on stock: {product.amountOnStock}</h2>
+                <h2 className='text-[#ffffff] font-medium border-b'>{product.name} {specificCategory.catagory}</h2>
+                <p className='text-[#ffffff] font-medium border-b'>ETB {product.price}.00</p>
+                </div>
                 </div>
 
               </div>
-              <div className='flex flex-col border-2 border-white text-white mt-10 gap-6 max-sm:gap-3 rounded p-5 bg-[rgba(0,0,0,0.9)] w-1/3 max-sm:w-full'>
+              <div className='flex flex-col border-2 border-white text-white mt-10 gap-6 max-sm:gap-3 rounded p-5 backdrop-blur-lg backdrop-opacity-50 w-1/3 max-sm:w-full'>
                 <div className='flex flex-col min-w-full'>
-                  <label className='font-medium' htmlFor="amount">amount</label>
+                  <label className='text-[#565353]' htmlFor="amount">amount</label>
                   <input className='w-full font-medium pl-1 [appearance:textfield] h-10 spin-in border-2 border-white rounded focus:outline-none' type="number" name={product.name} onChange={(e) => handleAmount(e, product.name)} onWheel={(e: WheelEvent<HTMLInputElement>) => e.currentTarget.blur()} value={nameO[product.name] || ""}/>
                 </div>
                 <div className='flex flex-col'>
-                  <label className='font-medium' htmlFor="amount">comment</label>
+                  <label className='text-[#565353]' htmlFor="amount">comment</label>
                   <textarea className='pl-1 font-medium w-full border-2 min-h-10 border-white rounded focus:outline-none' onChange={(e) => handleComment(e, product.name)}  rows={2}/>
                 </div>
                 <div className='flex flex-col mt-14 max-sm:mt-2 gap-8 justify-center items-center w-full'>
-                  <div className=' self-center flex w-full font-bold gap-4'>
-                    <p className='whitespace-pre-wrap'>price x amount</p>
+                  <div className=' self-center flex w-full font-semibold gap-4'>
+                    <p className='whitespace-pre-wrap'>price * amount</p>
                     <h1 className='w-1/2'>{amount ? `${(Number(nameO[product.name] ?? 0) * product.price)}`: 0}</h1>
                   </div>
                   
                   <button onClick={() => {
-                    if(user){
+                    if(!user){
+                    setAmount(null)
+                    router.push('/login')
+                    
+                  } else if(user) {
                     product.price && 
                     addItem({
                     categoryName: specificCategory.catagory,
@@ -132,13 +138,10 @@ const Category = ({id,specificCategory}: {id:string,specificCategory: oneCategor
                     comment: comment ? commentO[product.name] : undefined
                     }) 
                     setAmount(null)
-                  } else {
-                    setAmount(null)
-                    router.push('/login')
                   }
                     }
                     } 
-                    className=' w-full px-4 py-1 hover:bg-[#dddddd] bg-white text-black text-center whitespace-nowrap cursor-pointer font-medium'>add to cart</button>
+                    className=' w-full px-4 py-1 hover:bg-[#dddddd] backdrop-blur-2xl border-white border hover:text-black text-white text-center whitespace-nowrap cursor-pointer font-medium'>add to cart</button>
                 </div>
               </div>
             </div>
@@ -147,7 +150,14 @@ const Category = ({id,specificCategory}: {id:string,specificCategory: oneCategor
         <div>
           <h1>{}</h1>
         </div>
-      <div onClick={isMobile ? toggleCart : () => router.push('/cart')} className='text-white cursor-pointer self-center duration-300 transition-all shadow-[0_3px_5px_1px_rgba(150,150,150,0.9)]  
+      <div onClick={isMobile ? toggleCart : () => { 
+        if(!user){
+          router.push('/login')
+        } 
+        if(user){
+          router.push('/cart')
+        }
+        }} className='text-white cursor-pointer self-center duration-300 transition-all shadow-[0_3px_5px_1px_rgba(150,150,150,0.9)]  
       hover:shadow-[0_2px_3px_1px_rgba(0,0,0,0.9)]  
       hover:translate-y-1 whitespace-nowrap gap-4 text-2xl flex border-2 bg-black border-white px-10 py-2 font-bold'>       
          <h1>cart</h1>

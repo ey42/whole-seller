@@ -148,6 +148,7 @@ export const message = pgTable("message",{
   userId: text('user_id').references(() => user.id).notNull(),
   image: text('image'),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  view: boolean().default(false),
   updatedAt: timestamp("updated_at")
   .defaultNow()
   .$onUpdate(() => /* @__PURE__ */ new Date())
@@ -159,6 +160,7 @@ export const notification = pgTable("notification", {
   userId: text("user_id").references(() => user.id).notNull(),
   message: text("message").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  view: boolean().default(true),
   updatedAt: timestamp("updated_at")
   .defaultNow()
   .$onUpdate(() => /* @__PURE__ */ new Date())

@@ -68,15 +68,15 @@ const LandingPage = () => {
         <p className='max-w-2xl text-lg max-sm:hidden self-start p-5 ml-5 bg-[rgba(0,0,0,0.8)]'> <span className='font-bold'>Eyob Whole Seller</span> specializes in the efficient distribution of a wide spectrum of categorized goods. Get instant access to top-tier Milk, everyday Foods, a refreshing line of Soft Drinks, satisfying Snacks, creamy Yogurts, and delightful Biscuits. We are committed to ensuring your business receives fresh, quality products with unparalleled reliability and speed, right here in Addis Ababa.</p>
         <div className='flex flex-col self-start max-lg:self-center gap-10 px-5 wrap-break-word'>
           <h1 className='font-bold max-sm:text-xl text-4xl max-w-4xl'>Explore Our Diverse Product Categories</h1>
-          <div className='flex flex-col '>
+          <div className='flex flex-col justify-center items-center'>
          
-              <div className='columns-2 max-sm:gap-y-25 max-sm:max-w-full max-sm:gap-x-20  space-y-24'>
+              <div className='columns-2 max-sm:gap-y-25 max-sm:max-w-full max-sm:gap-x-5  space-y-24'>
                 {PRODUCTCS.map((product, pIndex) => (
-                  <div className='flex border border-[#d7dade] gap-5 break-inside-avoid max-lg:flex-col max-lg:w-full flex-1 w-full overflow-hidden bg-[rgba(0,0,0,0.8)] p-4' key={pIndex}>
+                  <div className='flex border border-[#d7dade] gap-5 break-inside-avoid max-lg:flex-col max-lg:w-full max-sm:w-5/6 self-center flex-1 w-full overflow-hidden bg-[rgba(0,0,0,0.8)] p-4' key={pIndex}>
                     <div className='flex gap-2 flex-col max-lg:items-center max-lg:order-2'>
                     <h1 className='text-2xl order font-bold'>{product.catagory}</h1>
                     <p className='max-w-xs max-md:hidden text-[#828282]'>{product.description}</p>
-                  <motion.div whileHover={{scale: 1.1}} whileTap={{scale:0.8}} className='border-2 h-10 max-md:text-sm max-md:px-2 max-md:py-1 self-center max-md:self-start bg-black text-white font-bold text-center items-center justify-center rounded-[5px] max-sm:rounded-xl max-md:w-full cursor-pointer w-56'>
+                  <motion.div whileHover={{scale: 1.1}} whileTap={{scale:0.8}} className='border-2 h-10 max-md:text-sm max-md:px-2 max-md:py-1 self-center max-md:self-start bg-black text-white font-bold text-center items-center justify-center rounded-[5px] max-sm:rounded max-md:w-full cursor-pointer w-56'>
                     <Link href={`/category/${product.id}`} className='w-full'> <h2 className='text-center w-full mt-1'>order now</h2></Link>
                   </motion.div>
                     </div>
@@ -95,12 +95,9 @@ const LandingPage = () => {
              <h1 className='font-bold text-2xl'>{PRODUCTCS[randomArrayProducts!].catagory} Products</h1>
              <p className='max-w-sm  text-[#828282] font-medium'>{PRODUCTCS[randomArrayProducts!].description}</p>
             </div> :<div className='flex gap-4 w-60 h-96 bg-gray-300'>
-             {/* <Image width={250} height={1000} alt={'hy'} src={PRODUCTCS[randomArrayProducts!].image} />
-             <h1 className='font-bold text-2xl'>{PRODUCTCS[randomArrayProducts!].catagory} Products</h1>
-             <p className='max-w-sm  text-[#828282] font-medium'>{PRODUCTCS[randomArrayProducts!].description}</p> */}
+
             </div>}
             
-              {/* {PRODUCTCS[randomArrayProducts!].products.map((category, index) => ( */}
                 <div className='flex flex-col gap-10'>
                   
                   {randomArrayProducts !== undefined && isLoading ? 
@@ -126,9 +123,6 @@ const LandingPage = () => {
                     
                 
                 </div>
-
-
-              {/* ))} */}
             
           </div>
         </div>

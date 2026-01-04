@@ -14,7 +14,6 @@ interface PageProps{
 
     const page = async ({params}: PageProps) => {
         const session = await getSession()
-            const user = session?.user
         const { categoryId } = await params
         const specificCategory : oneCategory  = PRODUCTCS.find((category) => category.id === categoryId) as oneCategory
         return (

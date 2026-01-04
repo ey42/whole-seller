@@ -24,6 +24,7 @@ CREATE TABLE "message" (
 	"user_id" text NOT NULL,
 	"image" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"view" boolean DEFAULT false,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
@@ -32,6 +33,7 @@ CREATE TABLE "notification" (
 	"user_id" text NOT NULL,
 	"message" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"view" boolean DEFAULT true,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint

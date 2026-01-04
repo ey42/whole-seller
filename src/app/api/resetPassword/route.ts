@@ -1,9 +1,8 @@
 export const runtime = 'nodejs';
 import { db } from "@/index";
-import { and, eq, gt } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-import { user, account } from '@/db/schema';
-import bcrypt from 'bcryptjs'
+import { account } from '@/db/schema';
 import { hash } from "@node-rs/argon2";
 
 export async function POST(req: NextRequest){
@@ -14,9 +13,8 @@ export async function POST(req: NextRequest){
     console.log(`useraccount ${singleUserAccount} and ${singleUserAccount.passwordResetTokenExpires! > new Date() }`)
 
     if(!userAccount || !(singleUserAccount.passwordResetTokenExpires! > new Date())){
-        console.log(`error from route.ts`)
         return NextResponse.json(
-            {error: "Invalid or expired"},
+            {success: false, message: 'time expired please send verification again'},
             {status: 400}
         )
     }

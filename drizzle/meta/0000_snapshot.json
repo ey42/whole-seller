@@ -1,5 +1,5 @@
 {
-  "id": "034dae66-17b9-4329-b406-a284057222d3",
+  "id": "bc22c9b9-8ea1-466a-9bb2-e07377fb7ecd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -173,6 +173,13 @@
           "notNull": true,
           "default": "now()"
         },
+        "view": {
+          "name": "view",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
@@ -231,6 +238,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "view": {
+          "name": "view",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
         },
         "updated_at": {
           "name": "updated_at",

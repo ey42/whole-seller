@@ -1,4 +1,4 @@
-🏪 Wholesaller E-Commerce Platform - Addis Ababa
+🏪 Wholesale E-Commerce Platform - Addis Ababa
 A B2B wholesale marketplace platform designed specifically for Ethiopian businesses in Addis Ababa. Connecting suppliers with local shop owners, businesses, and managers for bulk purchasing of everyday essentials.
 
 🌍 Local Focus

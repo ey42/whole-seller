@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useState, useContext, useEffect, ReactNode } from "react";
+import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 
 type CartItem = {
     id: string
@@ -47,6 +47,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [items]);
 
   const addItem = (item: CartItem, update?: boolean) => {
+    
+     if(item.orderPrice === 0){
+      alert('please provide amount')
+     throw new Error("must provide order price")
+    }
+
     if (update) {
       setItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
@@ -59,6 +65,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     })
     return
     }
+   
     setItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {

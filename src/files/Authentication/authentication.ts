@@ -8,7 +8,7 @@ export async function SignUp(formData: formDataProps){
         email, 
         password: password1, 
         name: fullName,
-        callbackURL: "/" 
+        callbackURL: "/login" 
     }, {
         onRequest: (ctx) => {
             //show loading

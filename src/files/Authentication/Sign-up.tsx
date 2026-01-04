@@ -77,9 +77,6 @@ const SignUpComponent = () => {
 
   const RegistrationSchema = z.object({
     fullName: z.string().min(2, "Full name is required"),
-    // image: z.instanceof(File).refine((file) => file.size <= 5 * 1024 * 1024, {message: "File size must be less than 5MB",}).refine(
-    // (file) => ["image/jpeg", "image/jpg", "image/png", "image/webp",null].includes(file.type),
-    // "Only .jpg, .jpeg, .png and .webp formats are supported.").optional(),
     email: z.email("Invalid email address"),
     phoneNumber: z.string().regex(/^\d{10}$/, "Must be a valid 10-digit number"),
     password1: z.string().min(8, "Password must be at least 8 characters").regex(/[A-Z]/, "Password must contain at least one uppercase letter").regex(/[a-z]/, "Password must contain at least one lowercase letter").regex(/[0-9]/, "Password must contain at least one number").regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
@@ -194,19 +191,19 @@ const SignUpComponent = () => {
           alert("Error during sign up: " + error.message) ;
         } else if(data){
           if(formData.image !== null){
-          const {datas: datas,error} = await uploadToProfile(formData.image!)
-          
-            if(!datas || error){
+          const {publicUrlData,error} = await uploadToProfile(formData.image!)
+          console.log(`url for data ${publicUrlData?.publicUrl}`)
+            if(!publicUrlData || error){
               insertToProfileTable({...formData, image: null, userId: data.user.id})
               alert(`there is error on uploading profile image: ${error?.message}`)
+              // router.push('/login')
+            }else if(publicUrlData !== null){
+              insertToProfileTable({...formData ,userId: data.user.id, image: publicUrlData.publicUrl})
               router.push('/login')
-            }else if(datas !== null){
-              insertToProfileTable({...formData ,userId: data.user.id, image: datas.fullPath})
-              router.push('/')
             }
           }else {
             insertToProfileTable({...formData, image: null, userId: data.user.id})
-            router.push('/')
+            router.push('/login')
           }
         } else {
           console.log("Unexpected response from sign up");
@@ -240,10 +237,6 @@ const SignUpComponent = () => {
       ...prevData,
       image: file
     }));
-
-
-    
-
   }
 };
   return (

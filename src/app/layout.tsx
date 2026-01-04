@@ -6,6 +6,7 @@ import Footer from "@/files/Footer";
 import MainButton from "@/files/MainButton";
 import { CartProvider } from "@/files/context/CartContext";
 import CartDrawer from "@/files/CartDrawer";
+import { AuthProvider } from "@/files/context/AurhContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,8 @@ export default function RootLayout({
           backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='7' height='7' fill='none' stroke='white'%3e%3cpath d='M0 .5H31.5V32'/%3e%3cpath d='M15 16v2M16 17h-2' stroke-width='2'/%3e%3c/svg%3e")`,
         }}
       >
-              <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,black_100%)] pointer-events-none"></div>
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,black_100%)] pointer-events-none"></div>
+        <AuthProvider>
         <CartProvider>
 
         <header className="top-0 z-20 w-full sticky flex">
@@ -49,13 +51,14 @@ export default function RootLayout({
 
         {children}
         </main>
-        <div className="bottom-5 mb-2 flex self-center w-11/12 sm:hidden sticky z-10">
+        <div className="bottom-5 mb-2 flex justify-center self-center w-11/12 sm:hidden sticky z-10">
           <MainButton/>
         </div>
         <footer className="bg-black relative z-10 w-full bottom-0">
           <Footer/>
         </footer>
         </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

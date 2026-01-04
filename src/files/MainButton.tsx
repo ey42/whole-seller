@@ -1,42 +1,46 @@
 "use client"
 import { Icons } from '@/Icons/iconica'
+import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
+import { ListOrdered } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { user } from './fakedatabase'
-// import React from 'react'
+import { useEffect, useState } from 'react'
+import { useAuthSession } from './context/AurhContext'
 
 
 const MainButton =  () => {
     const pathname = usePathname()
     const router = useRouter()
+    // const [user, setUser] = useState<string|null>(null)
+    const {user, setUser} = useAuthSession()
+
+    // useEffect(() => {
+    //     authClient.getSession().then((session) => {
+    //       if(session?.data?.user){
+    //         setUser(session.data.user.email)
+    //       } else {
+    //         setUser(null)
+    //       }})
+    // }, [])
 
   return (
-    user ? (
-    <div className='flex w-full rounded-lg self-center bg-black h-16 text-white items-center justify-center p-4 gap-14 flex-row'>
-        <div className='w-full'>
-            <Icons.phone className='w-full' width={30} height={30} fill='white' />
-        </div>
-        <div className='w-full'>
-            <Icons.Home onClick={() => router.push('/')} className='w-full' width={30} height={30} fill='white' />
-        </div>
-        <div className='w-full' onClick={() => router.push('/cart')}>
-            <Icons.cart className='w-full' width={30} height={30} fill='white' />
-        </div>
-        <div className='w-full'>
-            <Icons.message className='w-full' width={30} height={30} fill='white' />
-        </div>
+    <div className='flex w-full rounded self-center max-w-lg bg-black h-16 text-black items-center justify-center flex-row'>
+        <motion.div whileTap={{scale: 0.8}} className='w-full border-r-2 h-full items-center bg-white border-black  flex'>
+            {pathname !== '/orders' ? <Link className='w-full h-full flex items-center' href={user ? '#' : '/login' }><ListOrdered className='w-full' width={30} height={30} fill='black'/></Link> : <Link className='w-full h-full flex items-center' href='/'><Icons.Home className='w-full' width={30} height={30} fill='black'/></Link>}
+        </motion.div>
+        <motion.div whileTap={{scale: 0.8}} className='w-full border-r-2 h-full items-center bg-white border-black flex'>
+            {pathname === '/' ? <Link className='w-full h-full flex items-center' href={user ? "#" : "/login"}><Icons.notification className='w-full' width={30} height={30} fill='black' /></Link> : <Link className='w-full h-full flex items-center' href= "/"><Icons.Home className='w-full' width={30} height={30} fill='black' /></Link>}
+        </motion.div>
+        <motion.div whileTap={{scale: 0.8}} className='w-full border-r-2 h-full items-center bg-white border-black flex'>
+            <Link className='w-full h-full flex items-center' href={user ? '/cart' : '/login'}><Icons.cart className='w-full' width={30} height={30} fill='black' /></Link>
+        </motion.div>
+        <motion.div whileTap={{scale: 0.8}} className='w-full h-full items-center  bg-white flex '>
+            <Link className='w-full h-full flex items-center' href={user ? '#' : '/login'}><Icons.message className='w-full' width={30} height={30} fill='black' /></Link>
+        </motion.div>
     </div>
-    ) : (
-    <Link href={'/login'} className={cn('flex w-full rounded-2xl self-center bg-black h-16 text-white items-center justify-center p-4 gap-4 flex-row',{
-        "hidden": pathname === "/login" || pathname === "/sign-up"
-    }
-    )}>
-       <div><h1 className='text-3xl font-bold'>Login</h1></div>
-       <div> <Image src={'/better-auth-logo.svg'} alt='logo' width={40} height={40}/>  </div>
-    </Link>
-    )
   )
 }
 
