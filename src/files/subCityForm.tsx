@@ -8,7 +8,7 @@ const SubCityForm = ({label, options, value, onChange, path}:{label: string, opt
     const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className={cn('w-full flex flex-col', path ? 'relative': 'relative')}>
+    <div className={cn('w-full flex flex-col relative')}>
         <label className='font-semibold'>{label}</label>
 
         <button className='flex bg-zinc-800 items-center justify-between w-full p-2 border border-zinc-700 hover:border-green-500 transition-colors text-left' onClick={() => setIsOpen(!isOpen)} type='button'>
@@ -30,9 +30,9 @@ const SubCityForm = ({label, options, value, onChange, path}:{label: string, opt
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className={cn("left-0 subsityform mb-10 h-80 w-full bg-zinc-800 border border-zinc-700 rounded shadow-2xl z-40 overflow-auto",{
-              'absolute top-[105%]': !path,
-              'top-0 absolute h-60 bg-zinc-500': path
+            className={cn("left-0 subsityform absolute mb-10 h-80 w-full bg-zinc-800 border border-zinc-700 rounded shadow-2xl z-40 overflow-auto",{
+              'top-[105%]': !path,
+              'top-0 h-60 bg-zinc-500': path
             })}>
 
               {options.map((option) => (

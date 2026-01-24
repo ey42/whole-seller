@@ -1,9 +1,33 @@
 "use client"
 import { Icons } from '@/Icons/iconica'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useAuthSession } from './context/AurhContext'
+import { GetProfile } from '@/db/crud/select'
+import { userProfileProps } from '@/types/types'
+import { usePathname } from 'next/navigation'
 
 const Footer = () => {
+  const {user} = useAuthSession()
+  const [profile, setProfile] = useState<userProfileProps | null>(null)
+  const pathname = usePathname()
+  useEffect(() => {
+    if(user){
+      console.log(user.user.email)
+      GetProfile(user.id).then((data) => {
+        if (data){
+          setProfile(data)
+          return
+        } else {
+          setProfile(null)
+        }
+      })
+    }else{
+
+      console.log('not user on footer')
+    }
+  }, [])
   return (
     <div className='relative inset-0 flex flex-col justify-center items-center pb-2 border-t-[1.5px] text-white bg-black border-white pt-2 break-all w-full max-sm:px-4 px-2 max-sm:gap-5'
     style={{
@@ -23,20 +47,20 @@ const Footer = () => {
         </div>
       </div>
       <div className='flex max-sm:grid max-sm:grid-cols-2 max-sm:gap-y-10 max-sm:w-full z-10 gap-20 mr-4'>
-      <Link href={'about/company'} className='flex flex-col max-sm:order-2 max gap-4'>
+      <Link href={'/about/company'} className='flex flex-col max-sm:order-2 max gap-4' replace>
         <div className='font-medium'>company</div>
         <h1 className='font font-medium text-sm text-[#454545]'>Eyob Taffa</h1>
         <h1 className='font font-medium text-sm text-[#454545]'>About us</h1>
         <h1 className='font font-medium text-sm text-[#454545]'>Our team</h1>
       </Link>
-      <Link href={'about/our-service'} className='flex flex-col z-10 gap-4'>
+      <Link href={'/about/our-service'} className='flex flex-col z-10 gap-4' replace>
         <div>
         <h1 className='font-medium'>Our service</h1></div>
         <h1 className='font-medium text-sm text-[#454545]'>wholesale distribution</h1>
         <h1 className='font-medium text-sm text-[#454545]'>Logistics and supply chain</h1>
         <h1 className='font-medium text-sm text-[#454545]'>market access</h1>
       </Link>
-      <Link href={'/about/contact-us'} className='flex flex-col z-10 max-sm:order-1 gap-4'>
+      <Link href={'/about/contact-us'} className='flex flex-col z-10 max-sm:order-1 gap-4' replace>
         <div > <h1 className='font-medium '>Contact us</h1></div>
         <div className='text-sm text-[#454545]'>
           <h1 className='font-medium'>address:</h1>
@@ -53,9 +77,10 @@ const Footer = () => {
       </Link>
       </div>
       </div>
-      <div className='z-10 text-sm' style={{
-        color: "#454545"
-      }}>Copyright &copy;2026 All rights reserved!</div>
+      {user && (user.user.userRole === "admin" || user.user.userRole === "intermediate") && <motion.button whileTap={{
+        scale: 0.8
+      }} className='w-auto px-6 py-1 rounded z-10 mb-2 h-auto border text-[#454545] cursor-pointer border-[#454545]'><Link href={pathname.includes('/admin') ? '/': '/admin'} className='inset-0'>{pathname.includes('/admin')? "client":"admin"}</Link></motion.button>}
+      <div className='z-10 text-sm text-[#454545]'>Copyright &copy;2026 All rights reserved! {profile?.profile.id}</div>
     </div>
   )
 }

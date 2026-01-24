@@ -34,7 +34,6 @@ export interface formDataProps {
 }
 
 const SignUpComponent = () => {
-  // const [selectedImage, setSelectedImage] = useState<File | null> (null)
   const [showPassword, setShowPassword] = React.useState(false)     
   const [step, setStep] = useState(0);
   const [imagePreview, setImagePreview] = useState<string | null> (null)
@@ -55,6 +54,7 @@ const SignUpComponent = () => {
     tinNumber: ""
   })
   const [generatePassword, setGeneratedPassword] = useState<string>("")
+  const [mainError, setMainError] = useState<string | null>(null)
   const [copied, setCopied] = useState<boolean>(false)
   const router = useRouter();
   useEffect(() => {
@@ -87,10 +87,7 @@ const SignUpComponent = () => {
     kebele: z.string(),
     tinNumber: z.string()
   })
-  // .refine((data) => data.password1 === data.password2, {
-  //   message: "Passwords do not match",
-  //   path: ["password2"], // This attaches the error to password2 specifically
-  // });
+
 
   function validEachFrom(): boolean {
     if(step === 0){
@@ -131,7 +128,6 @@ const SignUpComponent = () => {
         return true
       }
   } else if (step === 2){
-    // You can add additional validation for step 2 if needed
     if(validateForm() === true){
       return true;
     } else{
@@ -150,7 +146,6 @@ const SignUpComponent = () => {
       return false
     } else {
       return true
-      // Proceed with form submission (e.g., send data to server)
     }
   }
 
@@ -170,7 +165,7 @@ const SignUpComponent = () => {
      setStep((prev) =>  Math.min(prev + 1, totalSteps - 1))
      setError(undefined)
     console.log(step);
-  }
+    }
     };
 
 
@@ -185,30 +180,12 @@ const SignUpComponent = () => {
       console.log(result.error.format());
     } else {
       console.log("Form data is valid:", result.data);
-      // Proceed with form submission (e.g., send data to server)
-      SignUp(formData).then(async({data, error}) => {
-        if (error) {
-          alert("Error during sign up: " + error.message) ;
-        } else if(data){
-          if(formData.image !== null){
-          const {publicUrlData,error} = await uploadToProfile(formData.image!)
-          console.log(`url for data ${publicUrlData?.publicUrl}`)
-            if(!publicUrlData || error){
-              insertToProfileTable({...formData, image: null, userId: data.user.id})
-              alert(`there is error on uploading profile image: ${error?.message}`)
-              // router.push('/login')
-            }else if(publicUrlData !== null){
-              insertToProfileTable({...formData ,userId: data.user.id, image: publicUrlData.publicUrl})
-              router.push('/login')
-            }
-          }else {
-            insertToProfileTable({...formData, image: null, userId: data.user.id})
-            router.push('/login')
-          }
-        } else {
-          console.log("Unexpected response from sign up");
-        }
-    })
+      const {data} = await uploadToProfile(formData.tinNumber, formData.image!)
+      const { message, success} = await SignUp({...formData, image: data})
+
+      if(success === false){
+        setMainError(message)
+      }
   }
     
   }
@@ -411,9 +388,15 @@ const SignUpComponent = () => {
             </div>
             ) } {step === 2 && (
               <div className='text-xl flex items-center justify-center gap-5 flex-col' >
+               {mainError ? 
+               <div className='text-sm text-red-500'>
+                <p>{mainError}</p>
+               </div>
+               : 
+               <div className='flex items-center justify-center gap-5 flex-col'>
                 <h1 className='text-4xl'>congratulations✨</h1>
                 <p className='text-center w-full'>You have successfully completed the sign-up process. Click finish to create your account and start using our services!</p>    
-                
+                </div>}
                 <div className='flex text-white w-full justify-between'>
                 <button ref={submitRef} type= 'submit' className={cn('border px-6 hidden py-1 font-bold rounded self-center text-center cursor-pointer', step === totalSteps - 1 ? 'bg-green-500 text-black' : 'bg-white text-black')} disabled = {step !== totalSteps - 1}>
                   finish

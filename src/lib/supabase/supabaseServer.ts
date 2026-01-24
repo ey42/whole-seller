@@ -9,4 +9,4 @@ function createAdminClient() {
     }
   )
 }
-export const {storage} = createAdminClient()
+export const supabase = createAdminClient()

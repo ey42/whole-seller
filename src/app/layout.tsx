@@ -5,8 +5,9 @@ import Header from "@/files/Header";
 import Footer from "@/files/Footer";
 import MainButton from "@/files/MainButton";
 import { CartProvider } from "@/files/context/CartContext";
-import CartDrawer from "@/files/CartDrawer";
+import CartDrawer from "@/files/cart/CartDrawer";
 import { AuthProvider } from "@/files/context/AurhContext";
+import { SidebarProvider } from "@/files/context/SidebarContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,28 +38,13 @@ export default function RootLayout({
         }}
       >
         <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,black_100%)] pointer-events-none"></div>
+        <SidebarProvider>
         <AuthProvider>
         <CartProvider>
-
-        <header className="top-0 z-20 w-full sticky flex">
-          <Header/>               
-        </header>
-
-          <CartDrawer/>
-
-        
-        <main className="min-h-screen z-10">
-
         {children}
-        </main>
-        <div className="bottom-5 mb-2 flex justify-center self-center w-11/12 sm:hidden sticky z-10">
-          <MainButton/>
-        </div>
-        <footer className="bg-black relative z-10 w-full bottom-0">
-          <Footer/>
-        </footer>
         </CartProvider>
         </AuthProvider>
+        </SidebarProvider>
       </body>
     </html>
   );

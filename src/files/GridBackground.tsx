@@ -7,7 +7,7 @@ const GridBackground = ({ children }: { children: React.ReactNode }) => {
     const handleMouseMove = (e: React.MouseEvent) => {
         const {clientX, clientY, currentTarget} = e;
         const {left, top} = currentTarget.getBoundingClientRect();
-        setMousePos({ x: clientX - left, y: clientY - top });
+        setMousePos({x: clientX - left, y: clientY - top});
     }
   return (
     // 1. The Container with solid black background

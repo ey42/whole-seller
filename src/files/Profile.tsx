@@ -1,7 +1,7 @@
 "use client"
 import { GetProfile } from '@/db/crud/select'
-import React, { ChangeEvent, Suspense, useEffect, useRef, useState } from 'react'
-import { userProfileProps } from './types'
+import { ChangeEvent, Suspense, useEffect, useRef, useState } from 'react'
+import { userProfileProps } from '../types/types'
 import Image from 'next/image'
 import { Icons } from '@/Icons/iconica'
 import { Camera, Eye, EyeClosed, X } from 'lucide-react'
@@ -52,14 +52,14 @@ const Profile = ({id}:{id:string}) => {
     const [updateError, setUpdateError] = useState<updateErrorProps>({
         emptyError: "please fill the fields before click update"
     })
-       const [password, setPassword] = useState<passworProps>({
-            newPassword: null,
-            oldPassword: null
-        })
-        const [error, setError] = useState<errorProps>({
-            fetchError: null,
-            schemaError: null
-        })
+    const [password, setPassword] = useState<passworProps>({
+        newPassword: null,
+        oldPassword: null
+    })
+    const [error, setError] = useState<errorProps>({
+        fetchError: null,
+        schemaError: null
+    })
     const [userInfo, setUserInfo] = useState<userprops>({
         name: null,
         email: null,
@@ -84,14 +84,14 @@ const Profile = ({id}:{id:string}) => {
     },[id, successLoad || false])
 
     const updateInfoSchema = z.object({
-        name: z.string().min(2, 'name must be there').optional(),
-        email:z.email("Invalid email address").optional(),
-        phoneNumber: z.string().regex(/^\d{10}$/, "Must be a valid 10-digit number").optional(),
-        shopName: z.string().min(2, "Shop name is required").optional(),
-        subCity: z.string().min(2, 'subcity required field').optional(),
-        woreda:  z.string().min(1, "Woreda is required").optional(),
-        kebele: z.string().optional(),
-        TIN: z.string().optional(),
+        name: z.string().min(2, 'name must be there').nullable(),
+        email:z.email("Invalid email address").nullable(),
+        phoneNumber: z.string().regex(/^\d{10}$/, "Must be a valid 10-digit number").nullable(),
+        shopName: z.string().min(2, "Shop name is required").nullable(),
+        subCity: z.string().min(2, 'subcity required field').nullable(),
+        woreda:  z.string().min(1, "Woreda is required").nullable(),
+        kebele: z.string().nullable(),
+        TIN: z.string().nullable(),
     })
 
     const userSchema = updateInfoSchema.pick({
@@ -112,18 +112,20 @@ const Profile = ({id}:{id:string}) => {
         newPassword: z.string().min(8, "Password must be at least 8 characters long").regex(/[A-Z]/, "Password must contain at least one uppercase letter").regex(/[a-z]/, "Password must contain at least one lowercase letter").regex(/[0-9]/, "Password must contain at least one number").regex(/[^A-Za-z0-9]/, "Password must contain at least one special character")
       })
     const handleUpdate = async() => {
-     const hasUser : boolean = Object.entries(userInfo).filter(([_, I]) => I != null && I != '').length > 0
-     const hasProfile : boolean = Object.entries(profileInfo).filter(([_, I]) => I != null && I != '').length > 0
 
-     if(hasProfile === false && hasUser === false){
-        setUpdateError({...updateError, emptyError: "please fill the fields before click update"})
-        alert(updateError?.emptyError)
-        return
-     }
-     console.log(`name ${userInfo.name} TIN ${profileInfo.TIN}`)
+        const hasUser : boolean = Object.entries(userInfo).filter(([_, I]) => I != null && I != '').length > 0
+        const hasProfile : boolean = Object.entries(profileInfo).filter(([_, I]) => I != null && I != '').length > 0
+
+        if(hasProfile === false && hasUser === false){
+            setUpdateError({...updateError, emptyError: "please fill the fields before click update"})
+            alert(updateError?.emptyError)
+            return
+        }
 
         const userSchemaResult = userSchema.safeParse(userInfo)
         const profileSchemaResult = profileSchema.safeParse(profileInfo)
+
+        
         if(userSchemaResult.error || profileSchemaResult.error){
             if(profileSchemaResult.error){
                 setUpdateError({...updateError, ...profileSchemaResult.error.flatten().fieldErrors})
@@ -134,11 +136,12 @@ const Profile = ({id}:{id:string}) => {
             console.log(`userSchemaError ${userSchemaResult.error.flatten().fieldErrors}`)
             }
             
+            return 
         }
-        if(profileInfo.image !== null){
-            const {publicUrlData, error} = await uploadToProfile(profileInfo.image)
-            if(publicUrlData){
-                updateProfile({users: userInfo, profiles: {...profileInfo, image: publicUrlData.publicUrl}, id}).then((data) => {
+        if(profileInfo.image !== null && profile && profile.profile.TIN){
+            const {data, error} = await uploadToProfile(profile.profile.TIN, profileInfo.image)
+            if(data){
+                updateProfile({users: userInfo, profiles: {...profileInfo, image: data}, id}).then((data) => {
                     if(data.success === true){
                         setTimeout(() => {
                             setSuccessLoad(true)
@@ -157,7 +160,7 @@ const Profile = ({id}:{id:string}) => {
             })
             }
             if(error){
-            setUpdateError({...updateError, imageError: error.message})
+            setUpdateError({...updateError, imageError: error})
             }   
         }
        updateProfile({users: userInfo, profiles: {...profileInfo, image: null}, id}).then((data) => {
@@ -260,7 +263,7 @@ useEffect(() =>{
             </div>
             <div className='flex max-sm:self-start self-center max-sm:pl-10 text-black font-semibold max-sm:text-lg gap-4 flex-col'>
                 {!profile?.name ? <h1 className='animate-pulse w-32 rounded bg-gray-400 h-auto  text-transparent'>l</h1>:<h1 className='text-lg max-sm:text-2xl first-letter:uppercase'>{profile?.name}</h1>}
-                {!profile?.profile.userRole ? <h1 className='animate-pulse w-32 rounded bg-gray-400 h-auto  text-transparent'>l</h1>:<h1>{profile?.profile.userRole}</h1>}
+                {!profile?.profile ? <h1 className='animate-pulse w-32 rounded bg-gray-400 h-auto  text-transparent'>l</h1>:<h1>{profile?.userRole}</h1>}
                 {!profile?.profile.subCity ? <h1 className='animate-pulse w-32 rounded bg-gray-400 h-auto  text-transparent'>l</h1>:<h1 className='first:uppercase'>{profile?.profile.subCity && `${profile?.profile.subCity},`} {profile?.profile.woreda && `woreda ${profile?.profile.woreda},`} {profile?.profile.woreda && `kebele ${profile?.profile.kebele}`}</h1>}
             </div>
         </div>
@@ -272,7 +275,7 @@ useEffect(() =>{
             </div>
             <div className='flex max-sm:flex-col max-sm:gap-6 gap-20'>
                 <div className='flex text-sm flex-col'>
-                    <p className='text-sm font-semibold'>First Name</p>
+                    <p className='text-sm font-semibold'>Full Name</p>
                     {!profile?.name ? <h1 className='animate-pulse w-32 rounded bg-gray-400 h-auto  text-transparent'>l</h1>:<h1 className='font-semibold first-letter:uppercase'>{profile?.name}</h1>}
                 </div>
                 <div className='flex text-sm flex-col'>
@@ -347,7 +350,7 @@ useEffect(() =>{
             <div className='flex self-center max-sm:gap-2 gap-10 max-sm:pl-2 max-sm:flex-col max-sm:self-start'>
             <div className='flex self-center max-sm:self-start gap-2 text-black font-semibold  flex-col'>
                 <h1 className='text-lg max-sm:text-lg first-letter:uppercase'>{profile?.name}</h1>
-                <h1>role: {profile?.profile.userRole}</h1>
+                <h1>role: {profile?.userRole}</h1>
                 <h1>shop name: {profile?.profile.shopName}</h1>
                 <h1 className='first:uppercase'>{profile?.profile.subCity && `${profile?.profile.subCity},`} {profile?.profile.woreda && `woreda ${profile?.profile.woreda},`} {profile?.profile.woreda && `kebele ${profile?.profile.kebele}`}</h1>
             </div>

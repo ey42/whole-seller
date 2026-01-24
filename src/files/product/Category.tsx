@@ -4,11 +4,12 @@ import { PRODUCTCS } from '../fakedatabase'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Icons } from '@/Icons/iconica'
-import { ChevronDown } from 'lucide-react'
+import { ArrowDown, ArrowDownSquare, ChevronDown } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useRouter } from 'next/navigation'
-import { oneCategory } from '../types'
+import { oneCategory } from '../../types/types'
 import { authClient } from '@/lib/auth-client'
+import { useAuthSession } from '../context/AurhContext'
 
 interface nameObject {
   [name: string]: string
@@ -24,13 +25,13 @@ interface User {
 }
 const Category = ({id,specificCategory}: {id:string,specificCategory: oneCategory}) => {
   const [amount, setAmount] = useState<number | null>(null)
-  const [user, setUser] = useState<string | null>(null)
   const [comment, setComment] = useState<string | null>(null)
   const [nameO, setName] = useState<nameObject>({})
   const [commentO, setCommentO] = useState<nameObject>({})
   const [isMobile, setIsMobile] = useState<boolean>(false)
   const {toggleCart, addItem, items} = useCart()
   const router = useRouter()
+  const {user} = useAuthSession()
 
   const handleAmount = (event: ChangeEvent<HTMLInputElement>, productName: string) => {
     const { value, name } = event.target
@@ -63,16 +64,6 @@ const Category = ({id,specificCategory}: {id:string,specificCategory: oneCategor
     return () => window.removeEventListener('resize', handleResize)
   },[])
 
-  useEffect(() => {
-    const user = authClient.getSession().then((session) => {
-      if(session.data?.user.email){
-        setUser(session.data?.user.email)
-      }else {
-        setUser(null)
-      }
-    })
-  },[])
-  console.log(nameO)
   return (
     <div className='text-black w-full wrap max-sm:whitespace-pre-line flex mb-10 gap-20 flex-col'>
       {specificCategory && <div className='flex justify-between px-20 items-start w-full max-sm:flex-col gap-10 max-sm:px-5'>
@@ -105,6 +96,8 @@ const Category = ({id,specificCategory}: {id:string,specificCategory: oneCategor
                 </div>
 
               </div>
+              <ArrowDown stroke='white' fill='none' className='self-center' width={35} height={35}/>
+              
               <div className='flex flex-col border-2 border-white text-white mt-10 gap-6 max-sm:gap-3 rounded p-5 backdrop-blur-lg backdrop-opacity-50 w-1/3 max-sm:w-full'>
                 <div className='flex flex-col min-w-full'>
                   <label className='text-[#565353]' htmlFor="amount">amount</label>
@@ -128,7 +121,7 @@ const Category = ({id,specificCategory}: {id:string,specificCategory: oneCategor
                   } else if(user) {
                     product.price && 
                     addItem({
-                    categoryName: specificCategory.catagory,
+                    categoryId: specificCategory.id,
                     id: product.id,
                     image: product.image,
                     name: product.name,

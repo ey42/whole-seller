@@ -1,27 +1,7 @@
 "use client";
 import { createContext, useState, useContext, useEffect, ReactNode } from "react";
 
-type CartItem = {
-    id: string
-    name: string;
-    price: number;
-    quantity: number;
-    orderPrice: number;
-    description?: string;
-    image: string;
-    comment?: string;
-    categoryName: string
-};
 
-type CartContextType = {
-  items: CartItem[];
-  addItem: (item: CartItem, update?: boolean) => void;
-  removeItem: (id: string) => void;
-  clearCart: () => void;
-  isOpen: boolean;
-  toggleCart: () => void;
-  closeCart: () => void;
-};
 
 export const CartContext = createContext<CartContextType | undefined>(undefined);
 

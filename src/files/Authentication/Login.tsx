@@ -5,6 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import  { useState } from 'react'
 import { SignIn } from './authentication'
+import { useRouter } from 'next/navigation'
+import { bekaAuth } from '@/lib/auth/authentication'
 
 
 const Login = () => {
@@ -16,13 +18,36 @@ const Login = () => {
   const [error, setError] = useState<string>("")
   const [resetPasswordError, setResetPasswordError] = useState<string | null>(null)
   const [resetPasswordSuccess, setResetPasswordSuccess] = useState<string | null>(null)
+  const router = useRouter()
 
-  const handleLogin = () => {
-    SignIn(email, password).then(({data, error}) => {
-      if(error){
-        setError(error.message!)
-      } 
-    })
+  const handleLogin = async() => {
+try {
+  // const res = await fetch('http://localhost:3000/api/authentication/login', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify({ email, password })
+  // });
+  
+  // const result = await res.json();
+  
+  // if(!res.ok){
+  //   setError(result.message);
+  //   return; // Don't proceed if there's an error
+  // }
+  
+  // alert('Successfully signed in');
+  // router.push('/');
+  const res = await bekaAuth().LoginEmail({email: email, password: password,callbackUrl: '/'})
+  if(res.success === false){
+    setError(res.message)
+  }
+  
+} catch (error) {
+  console.error('Fetch error:', error);
+  setError('Network error or server unavailable');
+}
   }
 
   const handleForgetPassword = async() => {
@@ -126,7 +151,7 @@ const Login = () => {
          
         </div>
       </div>
-      <Link href={'/sign-up'} className='flex hover:underline underline-offset-4 items-center mb-4 mt-32 justify-center'>
+      <Link href={'/sign-up'} className='flex hover:border-b hover:border-green-500 items-center mb-4 mt-32 justify-center'>
         <h2 className='text-lg text-green-500'>create new account</h2>
         <Icons.rightArrow className='mt-1' width={20} height={20} fill='oklch(72.3% 0.219 149.579)'/>
       </Link>

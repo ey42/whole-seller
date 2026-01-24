@@ -1,5 +1,5 @@
 {
-  "id": "bc22c9b9-8ea1-466a-9bb2-e07377fb7ecd",
+  "id": "277203ec-330e-4135-b7bf-d91e7a57cd26",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -148,8 +148,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "text": {
-          "name": "text",
+        "message": {
+          "name": "message",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -159,6 +159,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "admin_id": {
+          "name": "admin_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "image": {
           "name": "image",
@@ -202,6 +208,19 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
+        },
+        "message_admin_id_user_id_fk": {
+          "name": "message_admin_id_user_id_fk",
+          "tableFrom": "message",
+          "tableTo": "user",
+          "columnsFrom": [
+            "admin_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -220,8 +239,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
+        "admin_id": {
+          "name": "admin_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -256,12 +275,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "notification_user_id_user_id_fk": {
-          "name": "notification_user_id_user_id_fk",
+        "notification_admin_id_user_id_fk": {
+          "name": "notification_admin_id_user_id_fk",
           "tableFrom": "notification",
           "tableTo": "user",
           "columnsFrom": [
-            "user_id"
+            "admin_id"
           ],
           "columnsTo": [
             "id"
@@ -286,13 +305,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "order_date": {
-          "name": "order_date",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
         "user_id": {
           "name": "user_id",
           "type": "text",
@@ -307,8 +319,14 @@
           "notNull": false,
           "default": "'pending'"
         },
-        "total_amount": {
-          "name": "total_amount",
+        "total_product": {
+          "name": "total_product",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_price": {
+          "name": "total_price",
           "type": "numeric",
           "primaryKey": false,
           "notNull": false
@@ -531,6 +549,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "like": {
+          "name": "like",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
@@ -544,9 +568,31 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "catagory_id_idx": {
+          "name": "catagory_id_idx",
+          "columns": [
+            {
+              "expression": "catagory_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "product_user_id_user_id_fk": {
           "name": "product_user_id_user_id_fk",
@@ -680,14 +726,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "user_role": {
-          "name": "user_role",
-          "type": "role",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'user'"
-        },
         "sub_city": {
           "name": "sub_city",
           "type": "text",
@@ -704,7 +742,7 @@
           "name": "TIN",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "phone_number": {
           "name": "phone_number",
@@ -734,6 +772,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "profile_subCity_idx": {
+          "name": "profile_subCity_idx",
+          "columns": [
+            {
+              "expression": "sub_city",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -752,7 +805,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "profile_TIN_unique": {
+          "name": "profile_TIN_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "TIN"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -885,6 +946,14 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
+        },
+        "user_role": {
+          "name": "user_role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'user'"
         },
         "created_at": {
           "name": "created_at",

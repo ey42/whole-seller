@@ -17,17 +17,9 @@ const MainButton =  () => {
     // const [user, setUser] = useState<string|null>(null)
     const {user, setUser} = useAuthSession()
 
-    // useEffect(() => {
-    //     authClient.getSession().then((session) => {
-    //       if(session?.data?.user){
-    //         setUser(session.data.user.email)
-    //       } else {
-    //         setUser(null)
-    //       }})
-    // }, [])
 
   return (
-    <div className='flex w-full rounded self-center max-w-lg bg-black h-16 text-black items-center justify-center flex-row'>
+    <div className={cn('flex w-full rounded self-center max-w-lg bg-black h-16 text-black items-center justify-center flex-row', pathname.startsWith('/admin') ? 'hidden' : '' )}>
         <motion.div whileTap={{scale: 0.8}} className='w-full border-r-2 h-full items-center bg-white border-black  flex'>
             {pathname !== '/orders' ? <Link className='w-full h-full flex items-center' href={user ? '#' : '/login' }><ListOrdered className='w-full' width={30} height={30} fill='black'/></Link> : <Link className='w-full h-full flex items-center' href='/'><Icons.Home className='w-full' width={30} height={30} fill='black'/></Link>}
         </motion.div>

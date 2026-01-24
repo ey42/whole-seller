@@ -5,10 +5,10 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useCart } from './context/CartContext'
 import { useEffect, useState } from 'react'
 import {motion} from 'motion/react'
-import { LogIn, LogOut } from 'lucide-react'
-import { authClient } from '@/lib/auth-client'
+import { LogIn, LogOut, PackageOpen, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { SignOut } from './Authentication/authentication'
 import { useAuthSession } from './context/AurhContext'
+import { useSidebar } from './context/SidebarContext'
 
 
 
@@ -19,6 +19,8 @@ const Header = () => {
 
   const pathname = usePathname()
   const {toggleCart, closeCart, isOpen} = useCart()
+  const {isOpen: open ,toggleSidebar} = useSidebar()
+  
   useEffect(() => {
     if(!user){
       setUser(null)
@@ -41,18 +43,19 @@ const Header = () => {
     <div className='flex h-full overflow-hidden max-sm:hidden absolute right-0  font-medium'>
       <div className='flex items-center justify-center'>
 
-        <motion.div whileTap={{scale: 0.8}} className='cursor-pointer group relative justify-center border-r-2 border-black items-center w-24 bg-white hover:bg-[#dddddd] h-full' onClick={ user ? toggleCart : () => {console.log('hy')}}>
-          <Link className = "w-full h-full absolute inset-0" href={user ? "#" : "/login"}> 
+        <motion.div whileTap={{scale: 0.8}} className='cursor-pointer group relative justify-center border-r-2 border-black items-center w-24 bg-white hover:bg-[#dddddd] h-full' onClick={ user ? toggleCart : () => {router.push('/login')}}>
+          <div className = "w-full h-full absolute inset-0"> 
             <Icons.cart width={25} height={25} fill='black' className='transition-all left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute duration-300'/>
-          </Link>
+          </div>
 
           <span className="absolute bottom-0 left-0 h-1 w-full bg-black scale-x-0 origin-left transition-transform duration-300 ease-in-out group-hover:scale-x-100"/>
+
         </motion.div>
      
         <motion.div whileTap={{scale: 0.8}} 
         className='cursor-pointer flex items-center relative group justify-center w-24 border-r-2 border-black hover:bg-[#dddddd] bg-white h-full'>
           
-          <Link className="h-full w-full inset-0 absolute" href={user ? '#' : '/login'} >
+          <Link className="h-full w-full inset-0 absolute" href={user ? `/notification/${user.id}` : '/login'} >
             <Icons.notification className='transition-all left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute duration-300'  width={25} height={25} fill='black'/>
           </Link>
 
@@ -62,7 +65,7 @@ const Header = () => {
         <motion.div whileTap={{scale: 0.8}} 
         className='cursor-pointer flex items-center relative group justify-center w-24 border-r-2 border-black hover:bg-[#dddddd] bg-white h-full'>
           
-          <Link className="h-full w-full inset-0 absolute" href={user ? `/profile/${user.id}` : '/login'} >
+          <Link className="h-full w-full inset-0 absolute" href={user ? `/profile/${user.user.id}` : '/login'} >
             <Icons.User className='transition-all left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute duration-300'  width={25} height={25} fill='black'/>
           </Link>
 
@@ -74,7 +77,8 @@ const Header = () => {
         className='cursor-pointer hover:bg-[#dddddd] relative group flex items-center justify-center w-24 border-r-2 border-black bg-white h-full'>
           
           <Link className = "w-full h-full absolute inset-0" href={user ? '#' : '/login'}>
-            <Icons.message className='transition-all left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute duration-300' width={25} height={25} fill='black'/>
+            {/* <Icons.message className='transition-all left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute duration-300' width={25} height={25} fill='black'/> */}
+            <PackageOpen stroke='black' className='transition-all left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute duration-300' width={25} height={25}/>
           </Link>
 
           <span className="absolute bottom-0 left-0 h-1 w-full bg-black scale-x-0 origin-left transition-transform duration-300 ease-in-out group-hover:scale-x-100"/>
@@ -127,12 +131,12 @@ const Header = () => {
     {/* this is for mobile device */}
     <div className='flex z-10 py-1 px-1 w-full sm:hidden justify-between'>
       <div className='group relative flex items-center'>{/* this is link */}
-        {pathname !== "/login" && pathname !== "/sign-up"  ? <Icons.User width={25} height={25} fill='white'/> : <Link href={'/'}>  <Icons.Home width={25} height={25} fill='white'/> </Link>}   
+        {pathname !== "/login" && pathname !== "/sign-up" && !pathname.includes('/admin') && user  ? <Link href={`/profile/${user.id}`}><Icons.User width={25} height={25} fill='white'/></Link> : !pathname.includes('/admin') && pathname === "/login" || pathname !== "/sign-up" && !pathname.includes('/admin') ? <Link href={'/'}>  <Icons.Home width={25} height={25} fill='white'/> </Link> : <div onClick={toggleSidebar}>{!open ? <PanelLeftOpen />: <PanelLeftClose />}</div>}   
       </div>
       <div>
         {/* <Icons.notification width={25} height={25} fill='white'/> */}
         
-        {user ? <button className='mr-2 px-2 flex gap-x-1 border-x-2 rounded '><LogIn width={15}/> Login</button> : <button className='mr-2 px-2 flex gap-x-1 border-x-2 rounded '> Logout<LogOut width={15}/></button>}
+        {!user ? <button className='mr-2 px-2 flex gap-x-1 border-x-2 rounded '><LogIn width={15}/> Login</button> : pathname.startsWith('/admin') ? <Link href={'/'} className='mr-2 px-2 flex gap-x-1 border-x-2 rounded '> Client<LogOut width={15}/></Link> : <button className='mr-2 px-2 flex gap-x-1 border-x-2 rounded '>logout<LogOut width={15}/></button>}
       </div>
     </div>
     </div>

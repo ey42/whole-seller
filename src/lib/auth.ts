@@ -1,5 +1,5 @@
 import "server-only"; 
-import { betterAuth, jwt } from "better-auth";
+import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db,} from "..";
 import * as schema from "../db/schema";

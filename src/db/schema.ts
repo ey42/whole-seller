@@ -10,6 +10,7 @@ export const user = pgTable("user", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
+  userRole: roleEnum('user_role').default('user').notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -42,14 +43,13 @@ export const profile = pgTable("profile",{
   userId: text("user_id").references(() => user.id).notNull(),
   woreda: text("woreda"),
   kebele: text("kebele"),
-  userRole: roleEnum('user_role').default('user'),
   subCity: text('sub_city').notNull(),
   shopName: text("shop_name"),
-  TIN: text("TIN"),
+  TIN: text("TIN").notNull().unique(),
   phoneNumber: text('phone_number').notNull(),
   image: text("image")
 },
-(table) => [index("profile_userId_idx").on(table.userId)])
+(table) => [index("profile_userId_idx").on(table.userId),index("profile_subCity_idx").on(table.subCity)])
 
 export const account = pgTable(
   "account",
@@ -109,19 +109,21 @@ export const product = pgTable("product", {
   image: text("image").notNull(),
   name: varchar("name", {length: 50}).notNull(),
   description: text("description").notNull(),
-  price: decimal('price', {precision: 10, scale: 2}),
+  price: decimal('price', {precision: 10, scale: 2}).notNull(),
   categoryId: text('catagory_id').references(() => productCategory.id),
   stockOuantity: integer('stock_quantity').notNull(),
+  like: integer('like'),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updateAt: timestamp("update_at").defaultNow().$onUpdate(() => /* @__PURE__ */ new Date()).notNull()
-})
+  updateAt: timestamp("update_at").defaultNow().$onUpdate(() => /* @__PURE__ */ new Date()).notNull(),
+  type: text('type').notNull()
+}, (table) => [index('catagory_id_idx').on(table.categoryId)])
 
 export const order = pgTable("order",{
   id: text("id").primaryKey(),
-  orderDate: timestamp('order_date').defaultNow().notNull(),
   userId: text('user_id').references(() => user.id).notNull(),
   status: statusEnum('order_status').default('pending'),
-  totalAmount: decimal('total_amount'),
+  totalProduct: decimal('total_product'),
+  totalPrice: decimal('total_price'),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
   .defaultNow()
@@ -144,8 +146,9 @@ export const orderItem = pgTable("order_item",{
 
 export const message = pgTable("message",{
   id: text("id").primaryKey(),
-  message: text("text").notNull(),
+  message: text("message").notNull(),
   userId: text('user_id').references(() => user.id).notNull(),
+  AdminId: text('admin_id').references(() => user.id),
   image: text('image'),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   view: boolean().default(false),
@@ -157,7 +160,7 @@ export const message = pgTable("message",{
 
 export const notification = pgTable("notification", {
   id: text("id").primaryKey(),
-  userId: text("user_id").references(() => user.id).notNull(),
+  adminId: text("admin_id").references(() => user.id).notNull(),
   message: text("message").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   view: boolean().default(true),
@@ -178,7 +181,7 @@ export const profileRelation = relations(profile, ({one}) => ({
 
 export const notificationRelations = relations(notification, ({one}) => ({
   user: one(user, {
-    fields: [notification.userId],
+    fields: [notification.adminId],
     references: [user.id]
   })
 }))
@@ -231,6 +234,10 @@ export const productCategoryRelations = relations(productCategory, ({many, one})
  export const messageRelations = relations(message, ({one}) => ({
   user: one(user, {
     fields: [message.userId],
+    references: [user.id]
+  }),
+  admin: one(user, {
+    fields: [message.AdminId],
     references: [user.id]
   })
  }))
